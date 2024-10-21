@@ -1,0 +1,53 @@
+
+{
+    # Set your email for Let's Encrypt notifications
+    email caddy@lua.sh
+
+    # Enable on-demand TLS (SSL certificates)
+    on_demand_tls {
+        ask https://lua.sh/api/v1/domains/validate
+        burst 5
+        interval 2m
+    }
+
+    # JSON format for structured logging
+    log {
+        output file /var/log/caddy_access.log {  # Log to access log file
+            roll_size 100mb
+            roll_keep 5
+            roll_keep_for 720h
+        }
+        format json
+    }
+}
+
+# Redirect HTTP to HTTPS for all domains
+http:// {
+    redir https://{host}{uri}
+}
+
+# Main HTTPS block for reverse proxying
+https:// {
+    tls {
+        on_demand  # Enable on-demand TLS (SSL certificates)
+    }
+
+    reverse_proxy https://lua.sh {
+        header_up Host lua.sh  # Keep the upstream host as lua.sh
+        header_up Caddy-Custom-Domain {host}  # Pass the original domain
+        header_up X-Forwarded-Port {server_port}  # Forward the server port
+        header_up X-Real-IP {remote}  # Pass the real client IP
+        header_up X-Forwarded-Proto {scheme}  # Forward the scheme (HTTP/HTTPS)
+        health_timeout 5s  # Set health check timeout
+    }
+
+    log {
+        output file /var/log/caddy_error.log {  # Log to error log file
+            roll_size 100mb
+            roll_keep 5
+            roll_keep_for 720h
+        }
+        format json  # Use JSON format for easier parsing
+        level ERROR  # Log only errors for this block
+    }
+}
