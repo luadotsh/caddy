@@ -1,2 +1,3 @@
 # caddy
-The caddy server template for custom domains
+The https://caddyserver.com server template for custom domains
+
