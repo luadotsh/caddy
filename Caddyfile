@@ -35,7 +35,7 @@ https:// {
     reverse_proxy https://lua.sh {
         header_up Host lua.sh  # Keep the upstream host as lua.sh
         header_up Caddy-Custom-Domain {host}  # Pass the original domain
-        header_up X-Forwarded-Port {server_port}  # Forward the server port
+        header_up X-Forwarded-Port 443 # Forward the server port
         header_up X-Real-IP {remote}  # Pass the real client IP
         header_up X-Forwarded-Proto {scheme}  # Forward the scheme (HTTP/HTTPS)
         health_timeout 5s  # Set health check timeout
