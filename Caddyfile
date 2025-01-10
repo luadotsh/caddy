@@ -1,4 +1,3 @@
-
 {
     # Set your email for Let's Encrypt notifications
     email caddy@lua.sh
